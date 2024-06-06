@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text VS Image</title>
+    <link rel="icon" type="image/png" href="img/checkmark.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+            margin: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 2;
+        }
+        .input-group select {
+            width: 140px;
+            padding: 8px 8px 8px 40px; /* Increased left padding to accommodate the flag */
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            position: relative;
+            background-size: 20px;
+            background-repeat: no-repeat;
+            background-position: 8px center;
+        }
+        .input-group select option {
+            color: black;
+            padding-left: 40px; /* Increased left padding to accommodate the flag */
+        }
+        .input-group select.lang-eng { background-color: #007bff; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1ec-1f1e7.png'); }
+        .input-group select.lang-rus { background-color: #ff4d4d; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1f7-1f1fa.png'); }
+        .input-group select.lang-ben { background-color: #f9a825; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1e7-1f1e9.png'); }
+        .input-group select.lang-aze { background-color: #40c4ff; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1e6-1f1ff.png'); }
+        .input-group select.lang-por { background-color: #ffab40; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1e7-1f1f7.png'); }
+        .input-group select.lang-spa { background-color: #ff7043; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1ea-1f1f8.png'); }
+        .input-group select.lang-fra { background-color: #7e57c2; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1eb-1f1f7.png'); }
+        .input-group select.lang-hin { background-color: #ff6e40; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1ee-1f1f3.png'); }
+        .input-group select.lang-kaz { background-color: #42a5f5; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1f0-1f1ff.png'); }
+        .input-group select.lang-tur { background-color: #26a69a; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1f9-1f1f7.png'); }
+        .input-group select.lang-uzb { background-color: #66bb6a; background-image: url('https://twemoji.maxcdn.com/v/13.1.0/72x72/1f1fa-1f1ff.png'); }
+
+        .input-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 14px;
+        }
+        .dropZone {
+            border: 2px dashed #ccc;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #fafafa;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            flex: 1;
+        }
+        .dropZone:hover {
+            background-color: #e6e6e6;
+        }
+        .imagePreview {
+            max-width: 100px;
+            max-height: 100px;
+            display: none;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .result {
+            white-space: pre-wrap;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            flex: 3;
+        }
+        .diff-insert {
+            background-color: #e6ffe6;
+        }
+        .diff-delete {
+            background-color: #ffe6e6;
+        }
+        .uploadButton {
+            height: 30px;
+            padding: 0 10px 5px 10px;
+            background-color: darkseagreen;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0;
+        }
+        .uploadButton:hover {
+            background-color: darkcyan;
+        }
+        .reloadButton {
+            width: 25px;
+            height: 25px;
+            padding: 8px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .reloadButton:hover {
+            background-color: #218838;
+        }
+        .removeButton {
+            width: 25px;
+            height: 25px;
+            padding: 8px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .removeButton:hover {
+            background-color: #c82333;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            align-self: center;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loading-spinner {
+            display: none;
+            margin: 10px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Comparison Tool</h1>
+    <div class="container" id="sectionsContainer">
+        <!-- Sections will be added here -->
+    </div>
+    <button onclick="addSection()">Add Section</button>
+    <div class="loading-spinner" id="loadingSpinner"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script>
+        let sectionCount = 0;
+        let sectionsData = {};
+
+        function addSection() {
+            sectionCount++;
+            const sectionId = `section${sectionCount}`;
+
+            const section = document.createElement('div');
+            section.className = 'section';
+            section.id = sectionId;
+            section.innerHTML = `
+                <div class="input-group">
+                    <select id="languageSelect${sectionCount}" class="lang-select" onchange="updateSelectColor(this)">
+                        <option value="eng" class="lang-eng">EN</option>
+                        <option value="rus" class="lang-rus">RU</option>
+                        <option value="ben" class="lang-ben">BN</option>
+                        <option value="aze" class="lang-aze">AZ</option>
+                        <option value="por" class="lang-por">PT</option>
+                        <option value="spa" class="lang-spa">ES</option>
+                        <option value="fra" class="lang-fra">FR</option>
+                        <option value="hin" class="lang-hin">HI</option>
+                        <option value="kaz" class="lang-kaz">KZ</option>
+                        <option value="tur" class="lang-tur">TR</option>
+                        <option value="uzb" class="lang-uzb">UZ</option>
+                    </select>
+                    <textarea id="textInput${sectionCount}" rows="4" placeholder="Enter text here..."></textarea>
+                </div>
+                <div class="dropZone" id="dropZone${sectionCount}">Drag & drop image</div>
+                <input type="file" id="fileInput${sectionCount}" style="display:none" onchange="handleFileInput(event, '${sectionId}')">
+                <button class="uploadButton" onclick="document.getElementById('fileInput${sectionCount}').click();">📥</button>
+                <img id="imagePreview${sectionCount}" class="imagePreview" src="#" alt="Image preview">
+                <div class="result" id="result${sectionCount}"></div>
+                <button class="reloadButton" onclick="reprocessSection('${sectionId}')">&#x21bb;</button>
+                <button class="removeButton" onclick="removeSection('${sectionId}')">&#x2716;</button>
+            `;
+
+            document.getElementById('sectionsContainer').appendChild(section);
+
+            document.getElementById(`dropZone${sectionCount}`).addEventListener('paste', function(event) {
+                const items = event.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        const blob = items[i].getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            displayImage(sectionId, e.target.result);
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                }
+            });
+
+            document.getElementById(`dropZone${sectionCount}`).addEventListener('click', function() {
+                document.execCommand('paste');
+            });
+
+            // Set initial color for the select
+            updateSelectColor(document.getElementById(`languageSelect${sectionCount}`));
+        }
+
+        function updateSelectColor(selectElement) {
+            const selectedClass = selectElement.options[selectElement.selectedIndex].className;
+            selectElement.className = `lang-select ${selectedClass}`;
+        }
+
+        function displayImage(sectionId, src) {
+            const imagePreview = document.getElementById(`imagePreview${sectionId.replace('section', '')}`);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                applyPreprocessing(canvas, ctx);
+                imagePreview.src = canvas.toDataURL('image/png');
+                imagePreview.style.display = 'block';
+                sectionsData[sectionId] = {
+                    imageSrc: canvas.toDataURL('image/png')
+                };
+                compareText(sectionId);
+            };
+            img.src = src;
+        }
+
+        function applyPreprocessing(canvas, ctx) {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            // Convert to grayscale
+            for (let i = 0; i < data.length; i += 4) {
+                const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+                data[i] = brightness;
+                data[i + 1] = brightness;
+                data[i + 2] = brightness;
+            }
+            ctx.putImageData(imageData, 0, 0);
+
+            // Apply contrast enhancement
+            const contrastFactor = (259 * (128 + 255)) / (255 * (259 - 128));
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = contrastFactor * (data[i] - 128) + 128;
+                data[i + 1] = contrastFactor * (data[i + 1] - 128) + 128;
+                data[i + 2] = contrastFactor * (data[i + 2] - 128) + 128;
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function compareText(sectionId) {
+            const textInput = document.getElementById(`textInput${sectionId.replace('section', '')}`).value;
+            const language = document.getElementById(`languageSelect${sectionId.replace('section', '')}`).value;
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const src = sectionsData[sectionId]?.imageSrc;
+
+            if (src && textInput) {
+                loadingSpinner.style.display = 'block';
+                Tesseract.recognize(
+                    src,
+                    language,
+                    {
+                        logger: (m) => console.log(m)
+                    }
+                ).then(({ data: { text } }) => {
+                    loadingSpinner.style.display = 'none';
+                    const extractedText = text.trim();
+                    const resultDiv = document.getElementById(`result${sectionId.replace('section', '')}`);
+                    const diff = new diff_match_patch();
+                    const diffResult = diff.diff_main(textInput.trim(), extractedText);
+                    diff.diff_cleanupSemantic(diffResult);
+
+                    let html = '';
+                    for (let part of diffResult) {
+                        const [op, data] = part;
+                        const span = document.createElement('span');
+                        if (op === 1) {  // Insert
+                            span.className = 'diff-insert';
+                        } else if (op === -1) {  // Delete
+                            span.className = 'diff-delete';
+                        } else {
+                            span.className = 'diff-equal';
+                        }
+                        span.appendChild(document.createTextNode(data));
+                        html += span.outerHTML;
+                    }
+                    resultDiv.innerHTML = html;
+
+                }).catch(err => {
+                    loadingSpinner.style.display = 'none';
+                    console.error(err);
+                    document.getElementById(`result${sectionId.replace('section', '')}`).innerHTML = '<span style="color: red;">Error processing image.</span>';
+                });
+            } else {
+                alert('Please provide both text and an image.');
+            }
+        }
+
+        function handleFileInput(event, sectionId) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                displayImage(sectionId, e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function reprocessSection(sectionId) {
+            compareText(sectionId);
+        }
+
+        function removeSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.parentNode.removeChild(section);
+            delete sectionsData[sectionId];
+        }
+
+        // Initialize with a few sections
+        for (let i = 0; i < 10; i++) {
+            addSection();
+        }
+    </script>
+</body>
+</html>
